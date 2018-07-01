@@ -34,4 +34,40 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: yarn test
+      #- run: yarn test
+      
+      - persist_to_workspace:
+          root:
+            ~/
+          paths:
+            - project
+            
+  deploy:
+    working_directory: ~/project
+    docker:
+      - image: ${DOCKER_CIRCLE_DEPLOYER_URL}
+    steps:
+      - attach_workspace:
+          at: ~/
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and deploy docker container
+          command: |
+            build_and_deploy --build-arg PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN}
+workflows:
+  version: 2
+  test-and-deploy:
+    jobs:
+      - deploy:
+          requires:
+            - build
+          context: packaging_and_deployment_variables
+          filters:
+            branches:
+              only: master
+      - build:
+          filters:
+            tags:
+              only:
+                - /^v[0-9]+(\.[0-9]+)*([-\.0-9a-zA-Z]+)?$/
