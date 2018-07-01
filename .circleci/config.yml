@@ -12,6 +12,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:8
+    working_directory: ~/repo
     environment:
       - NODE_ENV: "development"
     steps:
