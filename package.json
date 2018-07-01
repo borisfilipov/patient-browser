@@ -11,7 +11,7 @@
     "test:watch": "./node_modules/karma/bin/karma start ./karma.conf.js",
     "clean": "cross-os do-clean",
     "start": "http-server build",
-    "postinstall": "npm run build",
+    "postinstall": "npm run build:prod",
     "build": "if-env NODE_ENV=production && npm run build:prod || npm run build:dev",
     "build:dev": "npm run clean && webpack --hide-modules && webpack-dev-server",
     "build:prod": "npm run clean && webpack",
